@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'rolepermissions',
-    'payments'
+    'payments',
+    'django_q'
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -128,3 +129,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHORIZE_TRANSFER_ENDPOINT = "https://util.devi.tools/api/v2/authorize"
+
+Q_CLUSTER = {
+    'name': 'DjangoQ',
+    'workers': 4,
+    'timeout': 60,
+    'retry':300,
+    'orm': 'default'
+}

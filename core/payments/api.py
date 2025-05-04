@@ -7,6 +7,8 @@ from django.db import transaction as django_transaction
 import requests
 from django.conf import settings
 from .models import Transactions
+from django_q.tasks import async_task
+from .tasks import send_notification
 
 
 payments_router = Router()
@@ -32,7 +34,7 @@ def make_transaction(request, payload: TransactionSchema):
         transct = Transactions(
             amount = payload.amount,
             payer_id = payload.payer,
-            payee_id = payload.payee
+            payee_id = payload.payee,
         )
         payer.save()
         payee.save()
@@ -41,5 +43,7 @@ def make_transaction(request, payload: TransactionSchema):
         response = requests.get(settings.AUTHORIZE_TRANSFER_ENDPOINT).json()
         if response.get('status') != "success":
             raise Exception()
+    
+    async_task(send_notification, payer.first_name, payee.first_name, payload.amount)
 
-    return 200, {'transaction_id': 1}
+    return 200, {'transaction_id': transct.id}

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'users.User'
-ROLEPERMISSION_MODULE = 'core.roles'
+ROLEPERMISSIONS_MODULE = 'core.roles'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

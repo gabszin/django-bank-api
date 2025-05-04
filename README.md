@@ -2,7 +2,15 @@
 
 ## Descrição
 
-Este projeto é uma API REST desenvolvida em Django para gerenciar funcionalidades relacionadas a pagamentos, usuários e permissões. A API foi projetada para ser escalável, modular e fácil de manter.
+A Bank Challenge API é uma API RESTful desenvolvida em Django para gerenciar funcionalidades de pagamentos, contas, usuários e permissões. Projetada para ser escalável, modular e de fácil manutenção, ela é ideal para sistemas financeiros que exigem transações seguras e confiáveis. Esta documentação é destinada a desenvolvedores que desejam configurar, utilizar ou contribuir com o projeto.
+
+## Funcionalidades
+
+-Gestão de contas e transferências.
+-Validação de saldo e tipo de conta.
+-Autorização externa com simulação de serviço offline.
+-Notificações após transações.
+-Atomicidade em caso de falha nas transações.
 
 ## Estrutura do Projeto
 
@@ -10,40 +18,41 @@ A estrutura do projeto está organizada da seguinte forma:
 
 ```
 core/
-    manage.py
-    core/
-        settings.py
-        urls.py
-        ...
-
-    payments/
-        models.py
-        views.py
-        api.py
-        ...
-
-    users/
-        models.py
-        views.py
-        api.py
-        validators.py
-        ...
+├── manage.py
+├── core/
+│   ├── settings.py
+│   ├── urls.py
+│   └── ...
+├── payments/
+│   ├── models.py
+│   ├── views.py
+│   ├── api.py
+│   └── ...
+├── users/
+│   ├── models.py
+│   ├── views.py
+│   ├── api.py
+│   ├── validators.py
+│   └── ...
 ```
 
 ### Principais Módulos
 
-- **core**: Contém as configurações principais do projeto.
-- **payments**: Gerencia funcionalidades relacionadas a pagamentos.
-- **users**: Gerencia funcionalidades relacionadas a usuários e validações.
+- **core**: Configurações globais do projeto, incluindo URLs e settings do Django.
+- **payments**: Lógica para gerenciamento de pagamentos e transações.
+- **users**: Gerenciamento de usuários, autenticação e validações.
 
 ## Tecnologias Utilizadas
 
 - **Linguagem**: Python 3.11
-- **Framework**: Django
-- **Banco de Dados**: SQLite (padrão, mas pode ser configurado para outros bancos como PostgreSQL ou MySQL)
+- **Framework**: Django 5.x com Django Ninja para APIs
+- **Banco de Dados**: SQLite (padrão para desenvolvimento; suporta PostgreSQL/MySQL em produção)
+- **DevOps**: Postman (teste de requisições da API)
+- **CI/CD**: Git e GitHub
 - **Outras Dependências**: 
-  - Django REST Framework
-  - Celery (para tarefas assíncronas)
+  - Django Ninja: Construção de endpoints RESTful
+  - DjangoQ: Gerenciamento de tarefas assíncronas
+  - Outras: Consulte o arquivo [requirements.txt](requirements.txt)
 
 ## Configuração do Ambiente
 
@@ -72,11 +81,31 @@ core/
    ```bash
    python manage.py runserver
    ```
+   A API estará disponível em [http://localhost:8000](http://localhost:8000).
 
 ## Endpoints Principais
 
 ### Usuários
-- **POST /users/**: Criação de usuários.
+- **POST /users/**
+  Criação de usuários.
+  **Exemplo de payload:**
+  ```bash
+  {
+      user:{
+          "username": "joao",
+          "first_name": "João",
+          "last_name": "Silveira",
+          "email": "joao@email.com",
+          "password": "1234", #proteção por hash
+          "cpf": "551.963.610-90"
+          },
+      type_user:{
+          "type":"user" / "company"
+          }
+  }
+  ```
+          
+      
 - **GET /users/{id}/**: Detalhes de um usuário.
 
 ### Pagamentos

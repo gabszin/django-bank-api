@@ -4,13 +4,21 @@
 
 A Bank Challenge API é uma API RESTful desenvolvida em Django para gerenciar funcionalidades de pagamentos, contas, usuários e permissões. Projetada para ser escalável, modular e de fácil manutenção, ela é ideal para sistemas financeiros que exigem transações seguras e confiáveis. Esta documentação é destinada a desenvolvedores que desejam configurar, utilizar ou contribuir com o projeto.
 
-## Funcionalidades
+### Funcionalidades
 
 -Gestão de contas e transferências.
+
 -Validação de saldo e tipo de conta.
+
+-Autenticações como validação de CPF e campos unicos já existentes no Banco de Dados.
+
 -Autorização externa com simulação de serviço offline.
+
 -Notificações após transações.
+
 -Atomicidade em caso de falha nas transações.
+
+-Contas do tipo empresarial podem apenas receber pagamentos.
 
 ## Estrutura do Projeto
 
@@ -38,9 +46,9 @@ core/
 
 ### Principais Módulos
 
-- **core**: Configurações globais do projeto, incluindo URLs e settings do Django.
-- **payments**: Lógica para gerenciamento de pagamentos e transações.
-- **users**: Gerenciamento de usuários, autenticação e validações.
+- **core**: Configurações globais do projeto, incluindo URLs, Schemas, Autenticador externo e settings do Django.
+- **payments**: Lógica para gerenciamento de transações com autenticador de pagamento externo e atomicidade.
+- **users**: Gerenciamento de usuários, autenticação (CPF) e validações (campos unicos: CPF e email).
 
 ## Tecnologias Utilizadas
 
@@ -88,6 +96,7 @@ core/
 ### Usuários
 - **POST /users/**
   Criação de usuários.
+  
   **Exemplo de payload:**
   ```bash
   {
@@ -97,20 +106,77 @@ core/
           "last_name": "Silveira",
           "email": "joao@email.com",
           "password": "1234", #proteção por hash
-          "cpf": "551.963.610-90"
+          "cpf": "551.963.610-90" #autenticador
           },
       type_user:{
-          "type":"user" / "company"
+          "type":"user" / "company" 
           }
   }
   ```
-          
-      
-- **GET /users/{id}/**: Detalhes de um usuário.
+  **Resposta Esperada (200 Created)**:
+  ```bash
+  {
+    "user_id": 1
+  }
+  ```
+  **Exceptions:**
+  
+  (Response 400):
+    ```bash
+  {
+    "errors": {
+      "cpf": "CPF Inválido.",
+      "email": "Já existe uma conta com esse email cadastrado."
+      }
+  }
+  ```
+  (Response 500):
+    ```bash
+  {
+    "errors": "Erro interno do servidor, por favor contate um Administrador"
+  }
+  ```
 
 ### Pagamentos
-- **POST /payments/**: Criação de um pagamento.
-- **GET /payments/{id}/**: Detalhes de um pagamento.
+- **POST /payments/**
+  Criação de um pagamento.
+  
+   **Exemplo de payload:**
+  ```bash
+    {
+     "amount": 10, #Valor
+     "payer_id": 6, #Quem enviou
+     "payee_id": 8 #Quem recebeu
+    }
+  ```
+  **Resposta Esperada (200 Created)**:
+  ```bash
+  {
+    "transaction_id": 1
+  }
+  ```
+  **Exceptions:**
+  
+  
+  (Response 400):
+    ```bash
+  {
+    "error": "Saldo  Insuficiente."
+  }
+  ```
+  (Response 403):
+    ```bash
+  {
+    "error": "Sem permissão para realizar transferências."
+  }
+  ```
+  (Response 403):
+    ```bash
+  {
+    "error": "O usuário não pode receber transferências."
+  }
+  ```
+    
 
 ## Testes
 

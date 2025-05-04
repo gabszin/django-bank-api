@@ -91,10 +91,11 @@ core/
    ```
    A API estará disponível em [http://localhost:8000](http://localhost:8000).
 
-## Endpoints Principais
+## Endpoints
 
 ### Usuários
 - **POST /users/**
+  
   Criação de usuários.
   
   **Exemplo de payload:**
@@ -139,6 +140,7 @@ core/
 
 ### Pagamentos
 - **POST /payments/**
+  
   Criação de um pagamento.
   
    **Exemplo de payload:**

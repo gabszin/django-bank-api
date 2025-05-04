@@ -1,4 +1,4 @@
-# PicPay API
+# Bank Challenge API
 
 ## Descrição
 
